@@ -7,7 +7,8 @@ const {verifyToken}=require('../middleware/verifyToken');
 
 router.get("/find/:userId",verifyToken,cartController.getCart);
 router.post("/",verifyToken,cartController.addToCart);
-router.put("/quantity",verifyToken,cartController.decrementCartItem);
+router.put("/increment",verifyToken,cartController.incrementCartItem);
+router.put("/decrement",verifyToken,cartController.decrementCartItem);
 router.delete("/:cartItemId",verifyToken,cartController.deleteCartItem);
 
 
