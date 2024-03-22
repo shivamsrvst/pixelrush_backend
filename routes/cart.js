@@ -10,9 +10,7 @@ router.post("/",verifyToken,cartController.addToCart);
 router.put("/increment",verifyToken,cartController.incrementCartItem);
 router.put("/decrement",verifyToken,cartController.decrementCartItem);
 router.delete("/:cartItemId",verifyToken,cartController.deleteCartItem);
-
-
-
+router.delete("/delete/:userId", verifyToken, cartController.deleteCart);
 
 
 

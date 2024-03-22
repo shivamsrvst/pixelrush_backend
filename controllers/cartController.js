@@ -137,5 +137,18 @@ module.exports = {
       console.log(error);
     }
   },
+  deleteCart: async (req, res) => {
+    const userId = req.user.id;
+    try {
+      // Find the cart by userId and delete it
+      const deletedCart = await Cart.findOneAndDelete({ userId });
+      if (!deletedCart) {
+        return res.status(404).json("Cart not found");
+      }
+      res.status(200).json("Cart deleted successfully");
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
 
 };
