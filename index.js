@@ -8,6 +8,7 @@ const authRouter=require("./routes/auth")
 const userRouter=require("./routes/user")
 const cartRouter=require("./routes/cart")
 const orderRouter=require("./routes/order")
+const paymentRouter=require("./routes/payment")
 
 const port = 3001
 const cors=require('cors')
@@ -24,5 +25,6 @@ app.use('/api/',authRouter)
 app.use('/api/users',userRouter)
 app.use('/api/cart',cartRouter)
 app.use('/api/orders',orderRouter)
+app.use('/api/payments',paymentRouter)
 
 app.listen(process.env.PORT || port, () => console.log(`Example app listening on port ${process.env.PORT}!`))
