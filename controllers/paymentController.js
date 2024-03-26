@@ -13,7 +13,11 @@ module.exports={
                 amount:amount,
                 currency:'usd',
                 description:description,
-                payment_method_types: ['card']
+                payment_method_types: ['card'],
+                customer: await stripe.customers.create({ // Create customer if they don't exist
+                    name: "Mark Struts",
+                    address: "CA 12412"
+                  })
             })
             console.log(paymentIntent);
             res.json({paymentIntent:paymentIntent.client_secret});
