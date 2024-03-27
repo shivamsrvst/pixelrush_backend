@@ -1,33 +1,47 @@
-const dotenv = require('dotenv');
-dotenv.config()
-const stripe=require('stripe')(process.env.STRIPE_SECRET);
+const dotenv = require("dotenv");
+dotenv.config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
-module.exports={
-    createPaymentIntent:async(req,res)=>{
-        const { amount, cartItems, userId,description } = req.body;
-        console.log("Cart Items Coming From Frontend for Database:",cartItems);
-        console.log("userId Coming from the backend:",userId);
-        console.log("Price Coming From the Frontend after including the shipping charge:",amount);
-        try {
-            const paymentIntent=await stripe.paymentIntents.create({
-                amount:amount,
-                currency:'usd',
-                description:description,
-                payment_method_types: ['card'],
-                customer: await stripe.customers.create({ // Create customer if they don't exist
-                    name: "Mark Struts",
-                    address: "CA 12412"
-                  })
-            })
-            console.log(paymentIntent);
-            res.json({paymentIntent:paymentIntent.client_secret});
-            
-        }catch (e) {
-            res.status(400).json({
-              error: e.message,
-            });
-          }
+module.exports = {
+  createPaymentIntent: async (req, res) => {
+    const {
+      amount,
+      description,
+      customerAddress,
+      customerEmail,
+    } = req.body;
+    try {
+      // 1. Check for existing customer by email
+      const existingCustomer = await stripe.customers.list({
+        email: customerEmail,
+      });
+      let customer;
+      if (existingCustomer.data.length === 0) {
+        // 2. Create customer if it doesn't exist
+        customer = await stripe.customers.create({
+          email: customerEmail,
+          address: customerAddress,
+        });
+      } else {
+        customer = existingCustomer.data[0]; // Use existing customer 
+      }
+      const paymentIntent = await stripe.paymentIntents.create({
+        description: description,
+        shipping: {
+          name: customerEmail, // Use dynamic name
+          address: customerAddress, // Use dynamic address
+        },
+        amount: amount,
+        currency: 'usd',
+        customer: customer.id, // Attach to customer 
+        payment_method_types: ['card'],
+      });
 
+      res.json({ paymentIntent: paymentIntent.client_secret });
+    } catch (e) {
+      res.status(400).json({
+        error: e.message,
+      });
     }
-
-}
+  },
+};
