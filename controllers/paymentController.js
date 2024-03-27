@@ -34,7 +34,9 @@ module.exports = {
         amount: amount,
         currency: 'usd',
         customer: customer.id, // Attach to customer 
-        payment_method_types: ['card'],
+        automatic_payment_methods: {
+          enabled: true,
+        },
       });
 
       res.json({ paymentIntent: paymentIntent.client_secret });
